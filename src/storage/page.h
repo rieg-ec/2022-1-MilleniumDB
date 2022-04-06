@@ -9,7 +9,9 @@
 #include "storage/page_id.h"
 
 class Page {
-friend class BufferManager; // needed to access private constructor
+    friend class BufferManager; // needed to access private constructor
+    friend class HeapPage;      // needed to modify page bytes
+
 public:
     static constexpr auto MDB_PAGE_SIZE = 4096;
 
@@ -17,21 +19,27 @@ public:
     PageId page_id;
 
     // mark as dirty so when page is replaced it is written back to disk.
-    inline void make_dirty() noexcept { dirty = true; }
+    inline void make_dirty() noexcept {
+        dirty = true;
+    }
 
     // only meant for buffer_manager.remove()
     void reset();
 
     // get the start memory position of `MDB_PAGE_SIZE` allocated bytes
-    inline char* get_bytes() const noexcept { return bytes; }
+    inline char* get_bytes() const noexcept {
+        return bytes;
+    }
 
     // get page number
-    inline uint_fast32_t get_page_number() const noexcept { return page_id.page_number; };
+    inline uint_fast32_t get_page_number() const noexcept {
+        return page_id.page_number;
+    };
 
 private:
-    uint_fast32_t pins;             // count of objects using this page, modified only by buffer_manager
-    char* bytes;                    // start memory address of the page, of size `MDB_PAGE_SIZE`
-    bool dirty;                     // true if data in memory is different from disk
+    uint_fast32_t pins;  // count of objects using this page, modified only by buffer_manager
+    char*         bytes; // start memory address of the page, of size `MDB_PAGE_SIZE`
+    bool          dirty; // true if data in memory is different from disk
 
     Page() noexcept;
     Page(PageId page_id, char* bytes) noexcept;

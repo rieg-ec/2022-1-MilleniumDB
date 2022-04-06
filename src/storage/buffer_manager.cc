@@ -106,7 +106,6 @@ uint_fast32_t BufferManager::get_private_buffer_available(uint_fast32_t thread_p
     return ret;
 }
 
-
 Page& BufferManager::get_page(FileId file_id, uint_fast32_t page_number) noexcept {
     const PageId page_id(file_id, page_number);
 
